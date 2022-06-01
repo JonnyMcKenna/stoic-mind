@@ -15,16 +15,13 @@ export default function Header() {
 
 const headerStyles = StyleSheet.create({
   headerViewContainer: {
-    // flex: 1,
     backgroundColor: "#181A20",
-    // height: 80,
     position: "absolute",
     top: 0,
     paddingTop: 55,
     paddingBottom: 20,
     width: "100%",
     zIndex: 100,
-    // paddingBottom: 20,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -32,7 +29,6 @@ const headerStyles = StyleSheet.create({
     borderWidth: 0.2,
   },
   headerText: {
-    // marginLeft: 40,
     fontSize: 14,
     textAlign: "center",
     color: "#848E9C",
@@ -41,6 +37,5 @@ const headerStyles = StyleSheet.create({
     width: 25,
     height: 25,
     marginBottom: 5,
-    // justifyContent: "center",
   },
 });

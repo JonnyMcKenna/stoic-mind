@@ -9,20 +9,16 @@ import SplashScreenAnimation from "./components/SplashScreenAnimation";
 import { LogBox } from "react-native";
 import useColorScheme from "./hooks/useColorScheme";
 import BannerAd from "./components/BannerAd";
+import { Notification } from "./types/genericTypes";
 
 LogBox.ignoreLogs(["Remote debugger"]);
 
 export default function App() {
   const [notificationPermissions, setNotificationPermissions] =
     useState<PermissionStatus>(PermissionStatus.UNDETERMINED);
-  const colorScheme = useColorScheme();
 
   const isLoadingComplete = useCachedResources();
   const [showSplash, setShowSplash] = useState(true);
-
-  interface Notification {
-    request: any;
-  }
 
   const handleNotification = (notification: Notification) => {
     const { title } = notification.request.content;
@@ -70,7 +66,7 @@ export default function App() {
       </SafeAreaProvider>
     ) : (
       <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
+        <Navigation />
         <BannerAd />
         <StatusBar />
       </SafeAreaProvider>

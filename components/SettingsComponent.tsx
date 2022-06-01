@@ -13,9 +13,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNDateTimePicker, {
-  DateTimePickerAndroid,
-} from "@react-native-community/datetimepicker";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { View as ThemeView } from "../components/Themed";
 import SettingsRowComponent from "./SettingsRowComponent";
 import * as Notifications from "expo-notifications";
@@ -58,7 +56,6 @@ const SettingsComponent = () => {
 
   const onChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || date;
-    setOpen(Platform.OS === "ios");
     storeNotificationDateToAsyncStorage(currentDate).then(() => {
       scheduleNotification();
     });
@@ -168,22 +165,6 @@ const SettingsComponent = () => {
             </TouchableOpacity>
           )}
 
-          {/* {open && (
-            <RNDateTimePicker
-              value={date}
-              mode={"time"}
-              is24Hour={true}
-              display="spinner"
-              onChange={onChange}
-            />
-          )} */}
-
-          {/* <ThemeView
-            style={settingsStyles.separator}
-            lightColor="lightgray"
-            darkColor="rgba(255,255,255,0.1)"
-          /> */}
-
           <ThemeView
             style={settingsStyles.separator}
             lightColor="lightgray"
@@ -217,24 +198,6 @@ const SettingsComponent = () => {
               }
             />
           </TouchableOpacity>
-
-          {/* <TouchableOpacity
-          onPress={() => console.log("Advertisement Free / Pro Version")}
-        >
-          <SettingsRowComponent
-            heading={"Advertisement Free / Pro Version"}
-            description={
-              "Remove all the ads on the App and support development"
-            }
-          />
-        </TouchableOpacity> */}
-
-          {/* <TouchableOpacity onPress={() => console.log("Rate App")}>
-          <SettingsRowComponent
-            heading={"Rate App"}
-            description={"If you like The Stoic, feel free to rate it 5 stars"}
-          />
-        </TouchableOpacity> */}
 
           <TouchableOpacity
             onPress={() =>

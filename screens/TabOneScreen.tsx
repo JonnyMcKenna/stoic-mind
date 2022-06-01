@@ -6,9 +6,7 @@ import Header from "../components/Header";
 import { View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 
-export default function TabOneScreen({
-  navigation,
-}: RootTabScreenProps<"TabOne">) {
+export default function TabOneScreen({}: RootTabScreenProps<"TabOne">) {
   return (
     <View style={styles.container}>
       <Header />

@@ -77,7 +77,6 @@ export default function EditScreenInfo() {
     Animated.timing(fadeAnimQuote, {
       toValue: 1,
       duration: 1000,
-      // easing: Easing.bounce,
       useNativeDriver: false,
     }).start();
   }
