@@ -26,7 +26,7 @@ export const homeScreenStyles = StyleSheet.create({
     textAlign: "center",
   },
   container: {
-    marginTop: "50%",
+    marginTop: "45%",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

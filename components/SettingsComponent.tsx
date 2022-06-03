@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
-  Platform,
   Animated,
   Easing,
 } from "react-native";
@@ -51,7 +50,6 @@ const SettingsComponent = () => {
   }, []);
 
   const [date, setDate] = useState(new Date(1598051757900));
-  const [open, setOpen] = useState(false);
   const [isSelected, setSelection] = useState(true);
 
   const onChange = (event: any, selectedDate: any) => {

@@ -7,6 +7,7 @@ import {
   BACKGROUND_FETCH_TASK,
   getDailyQuote,
   registerBackgroundFetchAsync,
+  scheduleNotification,
   storeQuoteToAsyncStorage,
   unregisterBackgroundFetchAsync,
 } from "./QuoteScreenAsyncStorage";
@@ -14,8 +15,9 @@ import { QuoteProps } from "../types/genericTypes";
 import { homeScreenStyles } from "../styles/homeScreen";
 import data from "../quotes.json";
 import "./QuoteScreenAsyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function EditScreenInfo() {
+export default function HomeScreen() {
   // On Load - Ensure that background fetch is in sync and get todays quote
 
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -40,6 +42,20 @@ export default function EditScreenInfo() {
       setQuote(dailyQuote);
     });
   }, []);
+
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem("alreadyLaunched").then((value) => {
+      if (value == null) {
+        scheduleNotification();
+        AsyncStorage.setItem("alreadyLaunched", "true"); // No need to wait for `setItem` to finish
+        setIsFirstLaunch(true);
+      } else {
+        setIsFirstLaunch(false);
+      }
+    }); // Add some error handling, also you can simply do this.setState({fistLaunch: value == null})
+  }, [isFirstLaunch]);
 
   const [isRegistered, setIsRegistered] = React.useState(false);
   const [quote, setQuote] = useState<QuoteProps>();

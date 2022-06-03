@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Platform, View } from "react-native";
 import { AdMobBanner } from "expo-ads-admob";
 import * as Device from "expo-device";
@@ -17,14 +17,13 @@ const BannerAd = () => {
   return (
     <View
       style={{
-        flex: 0.1,
         backgroundColor: "#181A20",
         alignItems: "center",
       }}
     >
       <AdMobBanner
         adUnitID={adUnitID}
-        bannerSize="fullBanner"
+        bannerSize="smartBannerLandscape"
         servePersonalizedAds={true}
         onDidFailToReceiveAdWithError={bannerError}
       />
