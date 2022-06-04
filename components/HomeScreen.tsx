@@ -48,6 +48,7 @@ export default function HomeScreen() {
   useEffect(() => {
     AsyncStorage.getItem("alreadyLaunched").then((value) => {
       if (value == null) {
+        AsyncStorage.setItem("@daily_notifications_toggle", "true");
         scheduleNotification();
         AsyncStorage.setItem("alreadyLaunched", "true"); // No need to wait for `setItem` to finish
         setIsFirstLaunch(true);
