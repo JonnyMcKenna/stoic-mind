@@ -9,12 +9,19 @@ const BannerAd = () => {
   // Is a real device and running in production.
   const adUnitID = Device.isDevice && !__DEV__ ? productionID : testID;
 
+  const [showAd, setShowAd] = useState(false);
+
+  const adReceived = () => {
+    setShowAd(true);
+    return;
+  };
+
   const bannerError = (error: any) => {
     console.log("Error receiving Ad: " + error);
     return;
   };
 
-  return (
+  return showAd ? (
     <View
       style={{
         backgroundColor: "#181A20",
@@ -26,9 +33,10 @@ const BannerAd = () => {
         bannerSize="smartBannerLandscape"
         servePersonalizedAds={true}
         onDidFailToReceiveAdWithError={bannerError}
+        onAdViewDidReceiveAd={adReceived}
       />
     </View>
-  );
+  ) : null;
 };
 
 export default BannerAd;
