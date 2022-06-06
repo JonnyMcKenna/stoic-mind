@@ -121,10 +121,8 @@ export const scheduleNotification = async (newQuote?: any) => {
               body: dailyQuoteMessage + " - " + dailyQuoteAuthor,
               sound: true,
               priority: Notifications.AndroidNotificationPriority.HIGH,
-              // color: "blue",
             },
             trigger: {
-              // seconds: 3,
               hour: hour,
               minute: minute,
               repeats: true,

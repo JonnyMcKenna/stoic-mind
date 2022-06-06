@@ -51,6 +51,14 @@ export default function App() {
       setShowSplash(false);
     }, 1000);
 
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
     const listener =
       Notifications.addNotificationReceivedListener(handleNotification);
