@@ -172,18 +172,19 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   // Every day change the quote and save to async storage
 
   var currentDay = new Date().getDay;
-  const pastDay = await AsyncStorage.getItem("@past_day");
 
-  if (pastDay !== null) {
-    // If we are in the next day, store a new quote and update the current day in Async Storage
-    if (Number(pastDay) < Number(currentDay)) {
-      //get new quote
-      storeQuoteToAsyncStorage();
+  await AsyncStorage.getItem("@past_day").then((pastDay) => {
+    if (pastDay !== null) {
+      // If we are in the next day, store a new quote and update the current day in Async Storage
+      if (Number(pastDay) < Number(currentDay)) {
+        //get new quote
+        storeQuoteToAsyncStorage();
+        storeCurrentDayToAsyncStorage(Number(currentDay));
+      }
+    } else {
       storeCurrentDayToAsyncStorage(Number(currentDay));
     }
-  } else {
-    storeCurrentDayToAsyncStorage(Number(currentDay));
-  }
+  });
 
   return BackgroundFetch.BackgroundFetchResult.NewData;
 });
