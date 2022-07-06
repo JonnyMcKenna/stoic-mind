@@ -1,9 +1,5 @@
-import * as BackgroundFetch from "expo-background-fetch";
-import * as TaskManager from "expo-task-manager";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
-
-export const BACKGROUND_FETCH_TASK = "background-fetch";
 import data from "../quotes.json";
 
 export const getDailyNotificationsToggle = async () => {
@@ -45,35 +41,85 @@ export const storeNotificationDateToAsyncStorage = async (currentDate: any) => {
   }
 };
 
+const getCurrentDate = () => {
+  var currentDay = new Date().getDate().toString();
+  var currentMonth = (new Date().getMonth() + 1).toString();
+  var currentYear = new Date().getFullYear().toString();
+  const concatDate = currentYear + currentMonth + currentDay;
+  const currentDate = Number(concatDate);
+  return currentDate;
+};
+
+const storeCurrentDayToAsyncStorageAndGetQuote = (
+  currentDate: any,
+  dailyQuote: any
+) => {
+  storeCurrentDayToAsyncStorage(currentDate);
+  console.log(
+    "storeCurrentDayToAsyncStorageAndGetQuote: " + JSON.stringify(dailyQuote)
+  );
+
+  return JSON.parse(dailyQuote);
+};
+
+const storeQuoteAndGetNewQuote = (currentDate: any) => {
+  const retrievedQuotes = data.quotes;
+  const randomIndex = Math.floor(Math.random() * retrievedQuotes.length);
+  const newQuote = retrievedQuotes[randomIndex];
+  storeQuoteToAsyncStorage(newQuote);
+  storeCurrentDayToAsyncStorage(currentDate);
+  console.log("newQuote: " + newQuote);
+  return newQuote;
+};
+
 export const getDailyQuote = async () => {
-  // Get quote from async storage
   const dailyQuote = await AsyncStorage.getItem("@daily_quote");
 
   if (dailyQuote !== null) {
-    // If quote is stored in async storage return it
-    return JSON.parse(dailyQuote);
+    const returnedQuote = await AsyncStorage.getItem("@past_day").then(
+      (pastDay) => {
+        console.log("pastDay: " + pastDay);
+        if (pastDay !== null) {
+          const currentDate = getCurrentDate();
+          const pastDate = Number(JSON.parse(pastDay));
+
+          const isNewDay = pastDate < currentDate;
+
+          console.log("isNewDay: " + isNewDay);
+
+          return isNewDay
+            ? storeQuoteAndGetNewQuote(currentDate)
+            : storeCurrentDayToAsyncStorageAndGetQuote(currentDate, dailyQuote);
+        } else {
+          const currentDate = getCurrentDate();
+          return storeCurrentDayToAsyncStorageAndGetQuote(
+            currentDate,
+            dailyQuote
+          );
+        }
+      }
+    );
+    return returnedQuote;
   } else {
     // If no quote is stored in async storage, store and return deafult quote
-    storeQuoteToAsyncStorage({
-      text: "Life is long if you know how to use it.",
-      author: "Seneca",
-    });
-
-    return {
+    const intitialQuote = {
       text: "Life is long if you know how to use it.",
       author: "Seneca",
     };
+    storeQuoteToAsyncStorage(intitialQuote);
+    const currentDate = getCurrentDate();
+    storeCurrentDayToAsyncStorage(currentDate);
+    return intitialQuote;
   }
 };
 
-export const scheduleNotification = async (newQuote?: any) => {
+export const scheduleNotification = async () => {
   // Cancel previous notification from async storage
   await Notifications.cancelAllScheduledNotificationsAsync();
 
   let minute = 0;
   let hour = 8;
 
-  // TODO: Can maybe pass this in?
   getNotificationDate()
     .then((updatedNotificationDate) => {
       if (updatedNotificationDate) {
@@ -82,80 +128,37 @@ export const scheduleNotification = async (newQuote?: any) => {
       }
     })
     .then(() => {
-      let dailyQuoteMessage;
-      let dailyQuoteAuthor;
+      const schedulingOptions = {
+        content: {
+          title: "Stoic Mind",
+          body: "You have a new stoic quote of the day!",
+          sound: true,
+          priority: Notifications.AndroidNotificationPriority.HIGH,
+        },
+        trigger: {
+          hour: hour,
+          minute: minute,
+          repeats: true,
+        },
+      };
+      Notifications.scheduleNotificationAsync(schedulingOptions);
 
-      if (newQuote !== undefined || null) {
-        // If we have the newQuote use that
-        dailyQuoteMessage = newQuote.text;
-        dailyQuoteAuthor = newQuote.author;
-
-        //TODO: This code is being duplicated here and below - refactor this.
-        const schedulingOptions = {
-          content: {
-            title: "Stoic Mind",
-            body: dailyQuoteMessage + " - " + dailyQuoteAuthor,
-            sound: true,
-            priority: Notifications.AndroidNotificationPriority.HIGH,
-            // color: "blue",
-          },
-          trigger: {
-            // seconds: 3,
-            hour: hour,
-            minute: minute,
-            repeats: true,
-          },
-        };
-        Notifications.scheduleNotificationAsync(schedulingOptions);
-      } else {
-        // If we don't have newQuote then get it from async storage
-        // TODO: Can remove this and always pass in 'newQuote' in props
-        getDailyQuote().then((dailyQuote: any) => {
-          dailyQuoteMessage = dailyQuote.text;
-          dailyQuoteAuthor = dailyQuote.author;
-
-          //TODO: This code is being duplicated here and above - refactor this.
-          const schedulingOptions = {
-            content: {
-              title: "Stoic Mind",
-              body: dailyQuoteMessage + " - " + dailyQuoteAuthor,
-              sound: true,
-              priority: Notifications.AndroidNotificationPriority.HIGH,
-            },
-            trigger: {
-              hour: hour,
-              minute: minute,
-              repeats: true,
-            },
-          };
-          Notifications.scheduleNotificationAsync(schedulingOptions);
-        });
-      }
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        //TODO: might need to add code to open app when this is clicked?
+      });
     });
 };
 
 export const storeQuoteToAsyncStorage = async (newQuote?: any) => {
-  // If newQuote isn't passed in, generate and return a new one
-  if (!newQuote || newQuote === null) {
-    const retrievedQuotes = data.quotes;
-    const randomIndex = Math.floor(Math.random() * retrievedQuotes.length);
-    newQuote = retrievedQuotes[randomIndex];
-  }
-
   try {
     // Store the new quote in async storage
-    await AsyncStorage.setItem("@daily_quote", JSON.stringify(newQuote)).then(
-      () => {
-        // Schedule notification with the new quote
-        scheduleNotification(newQuote);
-      }
-    );
+    await AsyncStorage.setItem("@daily_quote", JSON.stringify(newQuote));
   } catch (e) {
     // saving error
   }
 };
 
-const storeCurrentDayToAsyncStorage = async (currentDay: number) => {
+export const storeCurrentDayToAsyncStorage = async (currentDay: number) => {
   try {
     await AsyncStorage.setItem(
       "@past_day",
@@ -165,43 +168,3 @@ const storeCurrentDayToAsyncStorage = async (currentDay: number) => {
     // saving error
   }
 };
-
-// 1. Define the task by providing a name and the function that should be executed
-// Note: This needs to be called in the global scope (e.g outside of your React components)
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  // Every day change the quote and save to async storage
-
-  var currentDay = new Date().getDay;
-
-  await AsyncStorage.getItem("@past_day").then((pastDay) => {
-    if (pastDay !== null) {
-      // If we are in the next day, store a new quote and update the current day in Async Storage
-      if (Number(pastDay) < Number(currentDay)) {
-        //get new quote
-        storeQuoteToAsyncStorage();
-        storeCurrentDayToAsyncStorage(Number(currentDay));
-      }
-    } else {
-      storeCurrentDayToAsyncStorage(Number(currentDay));
-    }
-  });
-
-  return BackgroundFetch.BackgroundFetchResult.NewData;
-});
-
-// 2. Register the task at some point in your app by providing the same name, and some configuration options for how the background fetch should behave
-// Note: This does NOT need to be in the global scope and CAN be used in your React components!
-export async function registerBackgroundFetchAsync() {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 60 * 15, // 15 minutes
-    stopOnTerminate: false, // android only,
-    startOnBoot: true, // android only
-  });
-}
-
-// 3. (Optional) Unregister tasks by specifying the task name
-// This will cancel any future background fetch calls that match the given name
-// Note: This does NOT need to be in the global scope and CAN be used in your React components!
-export async function unregisterBackgroundFetchAsync() {
-  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
-}

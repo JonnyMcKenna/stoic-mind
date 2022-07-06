@@ -69,3 +69,8 @@ Ad using Google AdMob:
 - https://www.crowdbotics.com/blog/how-to-implement-admob-in-react-native
 - https://developers.google.com/admob/android/native/start
 - https://www.npmjs.com/package/expo-ads-admob
+
+TODO:
+
+1. Have a generic notification. On app load check if date is different, if it=s update the quote
+2. Add addNotificationResponseReceivedListener - This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed) - https://docs.expo.dev/push-notifications/overview/ and https://docs.expo.dev/versions/latest/sdk/notifications/

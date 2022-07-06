@@ -81,12 +81,13 @@ const SettingsComponent = () => {
     }
 
     const isSelectedToggle = !isSelected;
-    await AsyncStorage.setItem(
+
+    AsyncStorage.setItem(
       "@daily_notifications_toggle",
       isSelectedToggle.toString()
-    );
-
-    setSelection(!isSelected);
+    ).then(() => {
+      setSelection(isSelectedToggle);
+    });
   };
 
   function addZeroBefore(n: any) {

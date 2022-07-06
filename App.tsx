@@ -25,6 +25,8 @@ export default function App() {
     console.warn(title);
   };
 
+  //https://gist.github.com/VeraZab/c3f13d51588bcfdf6799da65decf26fa
+
   const requestNotificationPermissions = async () => {
     const { status } = await Notifications.requestPermissionsAsync({
       ios: {

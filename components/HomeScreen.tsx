@@ -2,14 +2,10 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Animated } from "react-native";
 import NewButton from "./NewButton";
 import { Text, View } from "./Themed";
-import * as TaskManager from "expo-task-manager";
 import {
-  BACKGROUND_FETCH_TASK,
   getDailyQuote,
-  registerBackgroundFetchAsync,
   scheduleNotification,
   storeQuoteToAsyncStorage,
-  unregisterBackgroundFetchAsync,
 } from "./QuoteScreenAsyncStorage";
 import { QuoteProps } from "../types/genericTypes";
 import { homeScreenStyles } from "../styles/homeScreen";
@@ -18,10 +14,9 @@ import "./QuoteScreenAsyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
-  // On Load - Ensure that background fetch is in sync and get todays quote
-
   const [fadeAnim] = useState(new Animated.Value(0));
   const [fadeAnimQuote] = useState(new Animated.Value(0));
+  const [quote, setQuote] = useState<QuoteProps>();
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -36,10 +31,10 @@ export default function HomeScreen() {
       useNativeDriver: false,
     }).start();
 
-    checkStatusAsync();
-    toggleFetchTask();
     getDailyQuote().then((dailyQuote: any) => {
-      setQuote(dailyQuote);
+      if (dailyQuote.text !== quote?.text) {
+        setQuote(dailyQuote);
+      }
     });
   }, []);
 
@@ -57,27 +52,6 @@ export default function HomeScreen() {
       }
     }); // Add some error handling, also you can simply do this.setState({fistLaunch: value == null})
   }, [isFirstLaunch]);
-
-  const [isRegistered, setIsRegistered] = React.useState(false);
-  const [quote, setQuote] = useState<QuoteProps>();
-
-  const checkStatusAsync = async () => {
-    // Check if background fetch is registered and syced
-    const isRegistered = await TaskManager.isTaskRegisteredAsync(
-      BACKGROUND_FETCH_TASK
-    );
-    setIsRegistered(isRegistered);
-  };
-
-  // Ensure background fetch is registered
-  const toggleFetchTask = async () => {
-    if (isRegistered) {
-      await unregisterBackgroundFetchAsync();
-    } else {
-      await registerBackgroundFetchAsync();
-    }
-    checkStatusAsync();
-  };
 
   // Get, set and store new quote to async storage
   function updateQuote() {
