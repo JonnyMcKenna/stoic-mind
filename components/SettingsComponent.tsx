@@ -267,7 +267,7 @@ const SettingsComponent = () => {
 
           <TouchableOpacity
             onPress={() =>
-              Linking.openURL("https://www.jonnymckenna.com/").catch((err) =>
+              Linking.openURL("https://stoicmind.app/").catch((err) =>
                 console.error("Error", err)
               )
             }
@@ -293,7 +293,7 @@ const SettingsComponent = () => {
                       color: "#848E9C",
                     }}
                   >
-                    {"www.jonnymckenna.com"}
+                    {"stoicmind.app"}
                   </Text>
                 </View>
               </View>
