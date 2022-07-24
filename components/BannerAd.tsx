@@ -6,7 +6,6 @@ import * as Device from "expo-device";
 const BannerAd = () => {
   const testID = "ca-app-pub-3940256099942544/6300978111";
   const productionID = "ca-app-pub-8720230404543468/6602074352";
-  // Is a real device and running in production.
   const adUnitID = Device.isDevice && !__DEV__ ? productionID : testID;
 
   const bannerError = (error: any) => {
