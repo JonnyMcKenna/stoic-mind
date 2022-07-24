@@ -7,12 +7,14 @@ import {
   Linking,
   Animated,
   Easing,
+  Platform,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { View as ThemeView } from "../components/Themed";
 import SettingsRowComponent from "./SettingsRowComponent";
 import * as Notifications from "expo-notifications";
@@ -150,7 +152,7 @@ const SettingsComponent = () => {
             </View>
           </TouchableOpacity>
 
-          {isSelected && (
+          {isSelected && Platform.OS !== "ios" && (
             <TouchableOpacity onPress={() => openDateTimePickerAndroid()}>
               <SettingsRowComponent
                 heading={"Delivery Time"}
@@ -162,6 +164,32 @@ const SettingsComponent = () => {
                 }
               />
             </TouchableOpacity>
+          )}
+
+          {isSelected && Platform.OS === "ios" && (
+            <View style={settingsContainerStyle.rowContainer}>
+              <View style={{ width: "70%" }}>
+                <Text style={settingsRowChecklistStyle.heading}>
+                  {"Delivery Time"}
+                </Text>
+                <Text style={settingsRowChecklistStyle.description}>
+                  {"When do you want your daily dose? Currently at " +
+                    hours +
+                    ":" +
+                    minutes}
+                </Text>
+              </View>
+              <View style={{ width: "30%" }}>
+                <RNDateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={"time"}
+                  is24Hour={true}
+                  onChange={onChange}
+                  themeVariant="dark"
+                />
+              </View>
+            </View>
           )}
 
           <ThemeView

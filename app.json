@@ -5,20 +5,29 @@
     "slug": "stoic-mind",
     "version": "1.0.0",
     "orientation": "portrait",
+    "backgroundColor": "#181A20",
     "icon": "./assets/images/stoicIconSmall.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/stoicIconSmall.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#181A20"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jonnymckenna.stoicmind",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-8720230404543468~9172397374"
+      },
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/stoicIconSmall.png",
+        "backgroundColor": "#181A20"
+      }
     },
     "android": {
       "config": {
